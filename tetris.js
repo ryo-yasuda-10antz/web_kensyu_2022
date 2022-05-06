@@ -24,19 +24,23 @@ var boadArray = [
 ];
 
 function draw() {
-    $('#game').find('tr').each(function(i, elemTr) {
-        $(elemTr).children().each(function(j, elemTd) {
-            $(elemTd).removeClass();
-            switch (array[i][j]) {
+    $('#game').find('tr').each(function(i, elementTr) {
+        $(elementTr).children().each(function(j, elementTd) {
+            $(elementTd).removeClass();
+            switch (boadArray[i][j]) {
                 case 1:
-                    
+                    $(elementTd).addClass("stick");
                     break;
             
                 default:
-                    break;
+                    $(elementTd).addClass("default");
+                    //break;
             }
-        }
-        )
-    }
-    )
+        });
+    });
 }
+
+draw();
+setInterval(function() {
+    draw();
+}, 500);
