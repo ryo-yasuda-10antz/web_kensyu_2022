@@ -19,6 +19,8 @@ let minoIndex;
 let minoArray = [];
 
 let fallSpeed = 1300;
+let isGameover = false;
+let isShift = true;
 
 let isCanMove = {
     xAxis : true,
@@ -78,7 +80,7 @@ const tetrimino = [
 ];
 
 
-const ArrayReset = (array) => {
+const arrayReset = (array) => {
     for (let y = 0; y < boadRow; y++) {
         array[y] = [];
         for (let x = 0; x < boadCol; x++) {
@@ -88,10 +90,10 @@ const ArrayReset = (array) => {
 }
 
 const init = () => {
-    ArrayReset(boadArray);
-    ArrayReset(currentBoadArray);
-    ArrayReset(colorBoadArray);
-    ArrayReset(currentColorBoadArray);
+    arrayReset(boadArray);
+    arrayReset(currentBoadArray);
+    arrayReset(colorBoadArray);
+    arrayReset(currentColorBoadArray);
 
     minoArray = [];
     generateMino();
@@ -100,11 +102,12 @@ const init = () => {
 
 // ミノ生成
 const generateMino = () => {
-    ArrayReset(currentBoadArray);
+    arrayReset(currentBoadArray);
     movementX = 0;
     movementY = 0;
     minoIndex = randomSetSelect();
     currentMino = tetrimino[minoIndex];
+    isShift = true;
     let generateXPos;
     //console.log("len:" + currentMino.length);
     for (let y = 0; y < currentMino.length; y++) {
@@ -114,6 +117,11 @@ const generateMino = () => {
             currentBoadArray[y][x+generateXPos] = currentMino[y][x];
             if (currentMino[y][x] != 0) {
                 currentColorBoadArray[y][x+generateXPos] = minoIndex;
+            }
+            // gameover処理
+            if (boadArray[y][x+generateXPos] == 1) {
+                console.log("game over!!");
+                isGameover = true;
             }
         }
     }
@@ -195,17 +203,6 @@ const draw = () => {
                     $(elementTd).addClass("default");
                     break;
             }
-            // if (boadArray[i][j] == 1) {
-            //     $(elementTd).addClass("stick");
-            // } else {
-            //     $(elementTd).addClass("default");
-            // }
-
-            // if (currentBoadArray[i][j] == 1) {
-            //     $(elementTd).addClass("stick");
-            // } else {
-            //     $(elementTd).addClass("default");
-            // }
         });
     });
 }
@@ -237,8 +234,8 @@ const move = () => {
         const beforeChangeBoadArray = currentBoadArray.slice();
         const beforeChangeColorBoadArray = currentColorBoadArray.slice();
 
-        ArrayReset(currentBoadArray);
-        ArrayReset(currentColorBoadArray);
+        arrayReset(currentBoadArray);
+        arrayReset(currentColorBoadArray);
         update_array:
         for (let y = 0; y < boadRow; y++) {
             for (let x = 0; x < boadCol; x++) {
@@ -263,7 +260,6 @@ const move = () => {
                 }
             }
         }
-        
         currentColorUpdate();
         movementX += offsetX;
         movementY += offsetY;
@@ -336,8 +332,8 @@ const RotateMino = () => {
         // 回転前の位置を保存
         const beforeChangeBoadArray = currentBoadArray.slice();
         const beforeChangeColorBoadArray = currentColorBoadArray.slice();
-        ArrayReset(currentBoadArray);
-        ArrayReset(currentColorBoadArray);
+        arrayReset(currentBoadArray);
+        arrayReset(currentColorBoadArray);
 
         let isRotateCancel = false;
         let newMino = [];
@@ -401,12 +397,12 @@ const copyMino = () => {
             }
         }
     }
-    ArrayReset(currentBoadArray);
-    ArrayReset(currentColorBoadArray);
+    arrayReset(currentBoadArray);
+    arrayReset(currentColorBoadArray);
 }
 
 const arrayCopy = (sourceArray, targetArray) => {
-    ArrayReset(targetArray);
+    arrayReset(targetArray);
     for (let y = 0; y < boadRow; y++) {
         for (let x = 0; x < boadCol; x++) {
             targetArray[y][x] = sourceArray[y][x];
@@ -417,20 +413,10 @@ const arrayCopy = (sourceArray, targetArray) => {
 // 行削除
 const clearLine = () => {
     const compleatLineArray = [1,1,1,1,1,1,1,1,1,1];
-    //let clearLineArray = [0,0,0,0,0,0,0,0,0,0];
     let clearRowArray = [];
     let isClearLine = false;
     let beforeBoadArray = [];
     let beforeColorBoadArray = [];
-    //TestBoadArray[1][1] = 1;
-    // for (let y = 0; y < boadRow; y++) {
-    //     for (let x = 0; x < boadCol; x++) {
-    //         if (beforeBoadArray[y][x] == 1) {
-    //             console.log(x + "," + y);
-    //         }
-    //         //console.log(beforeBoadArray[y][x]); 
-    //     }
-    // }
 
     // 行が1で揃っているか
     for (let y = 0; y < boadRow; y++) {
@@ -441,7 +427,7 @@ const clearLine = () => {
                 isClearLine = true;
             }
             clearRowArray.push(y);
-            console.log ("clear");
+            //console.log ("clear");
         }
     }
 
@@ -475,7 +461,7 @@ const downBlock = (clearRow, clearBoadArray, colorArray) => {
     }
 }
 
-// 
+// 次のミノを生成可能チェックとと生成
 const checkGenerateMino = () => {
     const clearLineArray = [0,0,0,0,0,0,0,0,0,0];
     for (let i = 0; i < boadRow; i++) {
@@ -502,27 +488,68 @@ const currentColorUpdate = () => {
     }
 }
 
+
+// 全てのブロックを横に移動する
+const shiftBoad = () => {
+    if (isShift) {
+        // 移動前の位置を保存
+        const beforeChangeBoadArray = [];
+        const beforeChangeColorBoadArray = [];
+        arrayCopy(boadArray, beforeChangeBoadArray);
+        arrayCopy(colorBoadArray, beforeChangeColorBoadArray);
+
+        arrayReset(boadArray);
+        arrayReset(colorBoadArray);
+
+        for (let y = 0; y < boadRow; y++) {
+            let lastElement = beforeChangeBoadArray[y][boadCol-1];
+            let lastElementColor = beforeChangeColorBoadArray[y][boadCol-1];
+            for (let x = 0; x < boadCol; x++) {
+                if (x+1 < boadCol) {
+                    boadArray[y][x+1] = beforeChangeBoadArray[y][x]
+                    colorBoadArray[y][x+1] = beforeChangeColorBoadArray[y][x];
+                } else {
+                    boadArray[y][0] = lastElement;
+                    colorBoadArray[y][0] = lastElementColor;
+                }
+            }
+        }
+        isShift = false;
+    }
+}
+
 const setIsCamMove = (xAxis, yAxis) => {
     isCanMove.xAxis = xAxis;
     isCanMove.yAxis = yAxis;
 }
 //  TetrisMain
-const Tetris = () => {
+const tetris = () => {
     init();
     setInterval(function() {  // 0.1秒ごとに更新　
-        inputKey(); 
-        move();
-        RotateMino();
-        checkGenerateMino();
-        draw();
+        if (!isGameover) {
+            inputKey(); 
+            move();
+            RotateMino();
+            shiftBoad();
+            checkGenerateMino();
+            draw();
+        } else {
+            appendGameOverText();
+        }
     }, 100);
 
     setInterval(function(){
-        fall();
+        if (!isGameover) {
+            fall();
+        }
     }, fallSpeed);
 }
 
 // スタートボタン
-const HideStartBtn = () => {
-    $('#startbtn').css({display:"none"});
+const hideStartBtn = () => {
+    $('.button_solid014').css({display:"none"});
+}
+
+const appendGameOverText = () => {
+    $('.box2').css({display:"block"});
 }
