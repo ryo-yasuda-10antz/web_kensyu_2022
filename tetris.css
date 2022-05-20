@@ -18,6 +18,31 @@ td {
     background-color: #455A64;
 }
 
-.stick {
+.imino {
     background-color: #03A9F4;
 }
+
+.omino {
+    background-color: #f4ec03;
+}
+
+.smino {
+    background-color: #57f403;
+}
+
+.zmino {
+    background-color: #f41303;
+}
+
+.jmino {
+    background-color: #0327f4;
+}
+
+.lmino {
+    background-color: #f48c03;
+}
+
+.tmino {
+    background-color: #6f03f4;
+}
+

@@ -1,18 +1,24 @@
 let boadArray = [];
 let currentBoadArray = [];
+let colorBoadArray = [];
+let currentColorBoadArray = [];
 let currentMino = [];
 
+// 全体の行列
 const boadRow = 20;
 const boadCol = 10;
 
 // オフセット、移動管理
 let offsetX = 0;
 let offsetY = 0;
+// 生成後からの移動量
 let movementX = 0;
 let movementY = 0;
 let rotate = false;
+let minoIndex;
+let minoArray = [];
 
-let fallSpeed = 1500;
+let fallSpeed = 1300;
 
 let isCanMove = {
     xAxis : true,
@@ -20,6 +26,7 @@ let isCanMove = {
 }
 
 const tetrimino = [
+    [],
     [
         [0,0,0,0],
         [0,1,1,0],
@@ -36,12 +43,39 @@ const tetrimino = [
     ],
     [
         [0,0,0,0],
+        [0,1,0,0],
+        [1,1,1,0],
+        [0,0,0,0]
+
+    ],
+    [
+        [0,0,0,0],
+        [0,0,1,1],
+        [0,1,1,0],
+        [0,0,0,0]
+
+    ],
+    [
+        [0,0,0,0],
+        [1,1,1,0],
+        [0,0,1,0],
+        [0,0,0,0]
+
+    ],
+    [
+        [0,0,0,0],
+        [0,0,1,0],
+        [1,1,1,0],
+        [0,0,0,0]
+
+    ],
+    [
+        [0,0,0,0],
         [1,1,0,0],
         [0,1,1,0],
         [0,0,0,0]
     ]
 ];
-
 
 
 const ArrayReset = (array) => {
@@ -56,12 +90,10 @@ const ArrayReset = (array) => {
 const init = () => {
     ArrayReset(boadArray);
     ArrayReset(currentBoadArray);
+    ArrayReset(colorBoadArray);
+    ArrayReset(currentColorBoadArray);
 
-    // Debug
-    // currentBoadArray[1][6] = 1
-    // currentBoadArray[1][7] = 1
-    // currentBoadArray[2][6] = 1
-    // currentBoadArray[2][7] = 1
+    minoArray = [];
     generateMino();
     console.log("init");
 }
@@ -71,16 +103,37 @@ const generateMino = () => {
     ArrayReset(currentBoadArray);
     movementX = 0;
     movementY = 0;
-    currentMino = tetrimino[1];
+    minoIndex = randomSetSelect();
+    currentMino = tetrimino[minoIndex];
     let generateXPos;
-    //console.log("len:" + mino.length);
+    //console.log("len:" + currentMino.length);
     for (let y = 0; y < currentMino.length; y++) {
         for (let x = 0; x < currentMino[y].length; x++) {
+            // 座標と色情報更新
             generateXPos = (boadCol / 2) - (currentMino[y].length / 2);
             currentBoadArray[y][x+generateXPos] = currentMino[y][x];
+            if (currentMino[y][x] != 0) {
+                currentColorBoadArray[y][x+generateXPos] = minoIndex;
+            }
         }
     }
     movementX += generateXPos;
+}
+
+// 7セット1週でランダムでミノ選択
+const randomSetSelect = () => {
+    if (minoArray.length == 0) {
+        const indexArray = [1,2,3,4,5,6,7];
+        minoArray = indexArray.slice();
+        // random
+        for (let i = minoArray.length -1; i >= 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [minoArray[i], minoArray[j]] = [minoArray[j], minoArray[i]];
+        }
+    }
+    let num = minoArray.shift();
+    console.log('num;' + num);
+    return num;
 }
 
 // 描画処理
@@ -88,17 +141,71 @@ const draw = () => {
     $('#game').find('tr').each(function(i, elementTr) {
         $(elementTr).children().each(function(j, elementTd) {
             $(elementTd).removeClass();
-            if (boadArray[i][j] == 1) {
-                $(elementTd).addClass("stick");
-            } else {
-                $(elementTd).addClass("default");
+
+            switch (colorBoadArray[i][j]) {
+                case 1:
+                    $(elementTd).addClass("omino");
+                    break;
+                case 2:
+                    $(elementTd).addClass("imino");
+                    break;
+                case 3:
+                    $(elementTd).addClass("tmino");
+                    break;
+                case 4:
+                    $(elementTd).addClass("smino");
+                    break;
+                case 5:
+                    $(elementTd).addClass("jmino");
+                    break;
+                case 6:
+                    $(elementTd).addClass("lmino");
+                    break;
+                case 7:
+                   $(elementTd).addClass("zmino");
+                    break;
+                default:
+                    $(elementTd).addClass("default");
+                    break;
             }
 
-            if (currentBoadArray[i][j] == 1) {
-                $(elementTd).addClass("stick");
-            } else {
-                $(elementTd).addClass("default");
+            switch (currentColorBoadArray[i][j]) {
+                case 1:
+                    $(elementTd).addClass("omino");
+                    break;
+                case 2:
+                    $(elementTd).addClass("imino");
+                    break;
+                case 3:
+                    $(elementTd).addClass("tmino");
+                    break;
+                case 4:
+                    $(elementTd).addClass("smino");
+                    break;
+                case 5:
+                    $(elementTd).addClass("jmino");
+                    break;
+                case 6:
+                    $(elementTd).addClass("lmino");
+                    break;
+                case 7:
+                   $(elementTd).addClass("zmino");
+                    break;
+                default:
+                    $(elementTd).addClass("default");
+                    break;
             }
+            // if (boadArray[i][j] == 1) {
+            //     $(elementTd).addClass("stick");
+            // } else {
+            //     $(elementTd).addClass("default");
+            // }
+
+            // if (currentBoadArray[i][j] == 1) {
+            //     $(elementTd).addClass("stick");
+            // } else {
+            //     $(elementTd).addClass("default");
+            // }
         });
     });
 }
@@ -128,8 +235,10 @@ const move = () => {
     if (offsetX != 0 || offsetY != 0) {
         // 移動前の位置を保存
         const beforeChangeBoadArray = currentBoadArray.slice();
+        const beforeChangeColorBoadArray = currentColorBoadArray.slice();
 
         ArrayReset(currentBoadArray);
+        ArrayReset(currentColorBoadArray);
         update_array:
         for (let y = 0; y < boadRow; y++) {
             for (let x = 0; x < boadCol; x++) {
@@ -141,26 +250,21 @@ const move = () => {
                 //console.log("x;" + isCanMove.xAxis + " y;" + isCanMove.yAxis);
                 if (!isCanMove.xAxis) {  // xが移動できない時
                     currentBoadArray = beforeChangeBoadArray.slice(); // 移動キャンセル
+                    currentColorBoadArray = beforeChangeColorBoadArray.slice();
                     break update_array;
                 }
                 if (!isCanMove.yAxis) { // yが移動できない時　移動確定
-                    currentBoadArray = beforeChangeBoadArray.slice();
+                    currentBoadArray = beforeChangeBoadArray.slice();  // 移動キャンセル
+                    currentColorBoadArray = beforeChangeColorBoadArray.slice();
                     copyMino();
                     clearLine();
-                    generateMino();
-
-                    //console.log("next");
+                    //generateMino();
                     break update_array;
                 }
             }
         }
-        // for (let y = 0; y < boadRow; y++) {
-        //     for (let x = 0; x < boadCol; x++) {
-        //         if (currentBoadArray[y][x] == 1) {
-        //             console.log(x + "," + y);
-        //         }
-        //     }
-        // }
+        
+        currentColorUpdate();
         movementX += offsetX;
         movementY += offsetY;
         offsetX = 0;
@@ -231,7 +335,9 @@ const RotateMino = () => {
     if (rotate) {
         // 回転前の位置を保存
         const beforeChangeBoadArray = currentBoadArray.slice();
+        const beforeChangeColorBoadArray = currentColorBoadArray.slice();
         ArrayReset(currentBoadArray);
+        ArrayReset(currentColorBoadArray);
 
         let isRotateCancel = false;
         let newMino = [];
@@ -254,6 +360,7 @@ const RotateMino = () => {
                     //console.log("rotate x;" + (x+movementX) + " y;" + (y+movementY));
                     if (!arrayIndexRangeCheck(x+movementX , y+movementY)) {  // 回転後範囲外に出た
                         currentBoadArray = beforeChangeBoadArray.slice();
+                        currentColorBoadArray = beforeChangeColorBoadArray.slice();
                         currentMino = beforeMino.slice();
                         isRotateCancel = true;
                         break rotate_apply;
@@ -270,12 +377,15 @@ const RotateMino = () => {
                     canMove(x, y, 0, 0, currentBoadArray);
                     if (!isCanMove.xAxis || !isCanMove.yAxis) { // 移動不可
                         currentBoadArray = beforeChangeBoadArray.slice();　// 回転キャンセル
+                        currentColorBoadArray = beforeChangeColorBoadArray.slice();
                         currentMino = beforeMino.slice();
+                        setIsCamMove(true, true);
                         break rotate_mino;
                     }
                 }
             }
         }
+        currentColorUpdate();
         setIsCamMove(true, true);
         rotate = false;
     }
@@ -287,19 +397,31 @@ const copyMino = () => {
         for (let x = 0; x < boadCol; x++) {
             if (currentBoadArray[y][x] == 1) {
                 boadArray[y][x] = currentBoadArray[y][x];
+                colorBoadArray[y][x] = currentColorBoadArray[y][x];
             }
         }
     }
     ArrayReset(currentBoadArray);
+    ArrayReset(currentColorBoadArray);
 }
 
-// 列削除
+const arrayCopy = (sourceArray, targetArray) => {
+    ArrayReset(targetArray);
+    for (let y = 0; y < boadRow; y++) {
+        for (let x = 0; x < boadCol; x++) {
+            targetArray[y][x] = sourceArray[y][x];
+        }
+    }
+}
+
+// 行削除
 const clearLine = () => {
-    let compleatLineArray = [1,1,1,1,1,1,1,1,1,1];
+    const compleatLineArray = [1,1,1,1,1,1,1,1,1,1];
     //let clearLineArray = [0,0,0,0,0,0,0,0,0,0];
-    let clearRow;
+    let clearRowArray = [];
     let isClearLine = false;
     let beforeBoadArray = [];
+    let beforeColorBoadArray = [];
     //TestBoadArray[1][1] = 1;
     // for (let y = 0; y < boadRow; y++) {
     //     for (let x = 0; x < boadCol; x++) {
@@ -310,67 +432,97 @@ const clearLine = () => {
     //     }
     // }
 
+    // 行が1で揃っているか
     for (let y = 0; y < boadRow; y++) {
         if (JSON.stringify(compleatLineArray) === JSON.stringify(boadArray[y])) {
             for (let x = 0; x < boadCol; x++) {
                 boadArray[y][x] = 0;
-                clearRow = y;
+                colorBoadArray[y][x] = 0;
                 isClearLine = true;
             }
+            clearRowArray.push(y);
             console.log ("clear");
         }
     }
-    
-
 
     if (isClearLine) {
-        for (let y = 0; y < boadRow; y++) {
-            beforeBoadArray[y] = [];
-            for (let x = 0; x < boadCol; x++) {
-               beforeBoadArray[y][x] = boadArray[y][x]; 
-            }
-        }
-        deleteBlock(clearRow, beforeBoadArray);
-        isClearLine = false;
-        clearRow = 0;
-    }
-    
+        for (let i = 0; i < clearRowArray.length; i++) {
+            // 配列のコピー
+            for (let y = 0; y < boadRow; y++) {
+                beforeBoadArray[y] = [];
+                beforeColorBoadArray[y] = [];
+                for (let x = 0; x < boadCol; x++) {
+                   beforeBoadArray[y][x] = boadArray[y][x]; 
+                   beforeColorBoadArray[y][x] = colorBoadArray[y][x];
 
+                }
+            }
+            downBlock(clearRowArray[i], beforeBoadArray, beforeColorBoadArray);
+        }
+
+        isClearLine = false;
+        clearRowArray = [];
+    }
 }
 
-const deleteBlock = (clearRow, clearBoadArray) => {
+// 空いたスペース分下に下げる
+const downBlock = (clearRow, clearBoadArray, colorArray) => {
     for (let y = 0; y < clearRow; y++) {
         for (let x = 0; x < boadCol; x++) {
             boadArray[y+1][x] = clearBoadArray[y][x]; 
+            colorBoadArray[y+1][x] = colorArray[y][x];
         }
     }
 }
 
+// 
+const checkGenerateMino = () => {
+    const clearLineArray = [0,0,0,0,0,0,0,0,0,0];
+    for (let i = 0; i < boadRow; i++) {
+        if (JSON.stringify(clearLineArray) !== JSON.stringify(currentBoadArray[i])) {
+            return;
+        }
+    }
+    generateMino();
+}
 
 // 自動落下処理
 const fall = () => {
     offsetY = 1;
 }
 
+// 色更新
+const currentColorUpdate = () => {
+    for (let y = 0; y < boadRow; y++) {
+        for (let x = 0; x < boadCol; x++) {
+            if (currentBoadArray[y][x] == 1) {
+                currentColorBoadArray[y][x] = minoIndex;
+            }
+        }
+    }
+}
+
 const setIsCamMove = (xAxis, yAxis) => {
     isCanMove.xAxis = xAxis;
     isCanMove.yAxis = yAxis;
 }
+//  TetrisMain
+const Tetris = () => {
+    init();
+    setInterval(function() {  // 0.1秒ごとに更新　
+        inputKey(); 
+        move();
+        RotateMino();
+        checkGenerateMino();
+        draw();
+    }, 100);
 
-// Main
-//$(function() {
-  
+    setInterval(function(){
+        fall();
+    }, fallSpeed);
+}
 
-//});
-
-init();
-setInterval(function() {  // 0.5秒ごとに更新　
-    inputKey(); 
-    move();
-    RotateMino();
-    draw();
-}, 100);
-
-setInterval(function(){
-    fall();
-}, fallSpeed);
+// スタートボタン
+const HideStartBtn = () => {
+    $('#startbtn').css({display:"none"});
+}
