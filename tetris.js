@@ -448,6 +448,7 @@ const clearLine = () => {
 
         isClearLine = false;
         clearRowArray = [];
+        playSE();
     }
 }
 
@@ -487,7 +488,6 @@ const currentColorUpdate = () => {
         }
     }
 }
-
 
 // 全てのブロックを横に移動する
 const shiftBoad = () => {
@@ -545,11 +545,29 @@ const tetris = () => {
     }, fallSpeed);
 }
 
+// BGM
+const playBGM = (playFlag=true) => {
+    if (playFlag) {
+        $('#bgm').get(0).loop = true;
+        $('#bgm').get(0).play();
+    } else {
+        $('#bgm').get(0).pause();
+        $('#bgm').get(0).currentTime =0;
+    }
+}
+
+const playSE = () => {
+    $('#se').get(0).play();
+}
+
 // スタートボタン
 const hideStartBtn = () => {
     $('.button_solid014').css({display:"none"});
+    playBGM();
 }
 
+// ゲームオーバー表示
 const appendGameOverText = () => {
     $('.box2').css({display:"block"});
+    playBGM(false);
 }
