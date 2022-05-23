@@ -27,8 +27,8 @@ Space: 回転
 落下速度は1.3秒毎
 
 ## BGM・SE
-BGM  FC音工場 https://fc.sitefactory.info/bgm.html　
+BGM  FC音工場 https://fc.sitefactory.info/bgm.html
 コロブチカ
 
-SE 効果音ラボ https://soundeffect-lab.info/　
+SE 効果音ラボ https://soundeffect-lab.info/
 ペタッ
