@@ -1,7 +1,4 @@
 ## 各リンク
-### リポジトリ
-https://github.com/ryo-yasuda-10antz/web_kensyu_2022
-
 ### github pages
 https://ryo-yasuda-10antz.github.io/web_kensyu_2022/
 
@@ -30,6 +27,8 @@ Space: 回転
 落下速度は1.3秒毎
 
 ## BGM・SE
-BGM  FC音工場 https://fc.sitefactory.info/bgm.html　コロブチカ
+BGM  FC音工場 https://fc.sitefactory.info/bgm.html　
+コロブチカ
 
-SE 効果音ラボ https://soundeffect-lab.info/　ペタッ
+SE 効果音ラボ https://soundeffect-lab.info/　
+ペタッ
