@@ -1,37 +1,35 @@
-## Welcome to GitHub Pages
+## 各リンク
+### リポジトリ
+https://github.com/ryo-yasuda-10antz/web_kensyu_2022
 
-You can use the [editor on GitHub](https://github.com/ryo-yasuda-10antz/web_kensyu_2022/edit/main/README.md) to maintain and preview the content for your website in Markdown files.
+### github pages
+https://ryo-yasuda-10antz.github.io/web_kensyu_2022/
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
-### Markdown
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## 操作方法
+十字キー:  移動
+Space: 回転
 
-```markdown
-Syntax highlighted code block
+## 仕様
+ゲーム
+縦×横= 20×10マス
+左右、下移動と左回転
+1つミノが配置されると、ボード全体が1ブロック分右に移動する
 
-# Header 1
-## Header 2
-### Header 3
+## 描画
+テーブルを表示、cssでクラスを指定して色を表示している
+最初にjsでクラスをremoveし、その後に色を管理している配列からクラスを付与することで表示している
+0の場合は何もない、1~7に対してはそれぞれのミノの色が反映される
 
-- Bulleted
-- List
+## ブロック管理
+盤面の管理には2つの配列を使用しており、既に配置されたブロック管理配列と、現在操作しているミノを管理する配列の2つ
 
-1. Numbered
-2. List
+## ゲームの速度
+描画、移動、回転、行が揃ったかの更新は0.1秒毎に行なっている
+落下速度は1.3秒毎
 
-**Bold** and _Italic_ and `Code` text
+## BGM・SE
+BGM  FC音工場 https://fc.sitefactory.info/bgm.html　コロブチカ
 
-[Link](url) and ![Image](src)
-```
-
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/ryo-yasuda-10antz/web_kensyu_2022/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+SE 効果音ラボ https://soundeffect-lab.info/　ペタッ
